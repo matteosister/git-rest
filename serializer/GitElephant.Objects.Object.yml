@@ -1,0 +1,26 @@
+GitElephant\Objects\Object:
+    xml_root_name: object
+    exclusion_policy: ALL
+    properties:
+        sha:
+            expose: true
+            groups: [list]
+        name:
+            expose: true
+            groups: [list]
+        type:
+            expose: true
+            groups: [list]
+        link:
+            expose: true
+            groups: [list]
+        path:
+            expose: true
+            groups: [list]
+        full_path:
+            expose: true
+            groups: [list]
+    virtual_properties:
+        getLastCommit:
+            groups: [list]
+        getFullPath: {}

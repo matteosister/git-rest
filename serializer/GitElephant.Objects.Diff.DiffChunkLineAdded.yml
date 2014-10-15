@@ -1,0 +1,10 @@
+GitElephant\Objects\Diff\DiffChunkLineAdded:
+    xml_root_name: diff_chunk_line_added
+    exclusion_policy: ALL
+    properties:
+        type:
+            expose: true
+            groups: [detail]
+        content:
+            expose: true
+            groups: [detail]

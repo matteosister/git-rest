@@ -1,0 +1,17 @@
+GitElephant\Objects\Tree:
+    xml_root_name: tree
+    exclusion_policy: ALL
+    properties:
+        ref:
+            expose: true
+            groups: [list]
+        subject:
+            expose: true
+            groups: [list]
+        children:
+            max_depth: 1
+            expose: true
+            groups: [list]
+        pathChildren:
+            expose: true
+            groups: [list]

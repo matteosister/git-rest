@@ -1,0 +1,6 @@
+GitElephant\Objects\Log:
+    exclusion_policy: ALL
+    properties:
+        commits:
+            expose: true
+            groups: [list, detail]
