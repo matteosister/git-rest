@@ -8,7 +8,19 @@ $matcher = include 'routing.php';
 $repositoryRoot = __DIR__;
 $projectRoot = __DIR__;
 
-$app = function (\React\Http\Request $request, \React\Http\Response $response) use ($matcher, $repositoryRoot, $projectRoot) {
+$serializer = \JMS\Serializer\SerializerBuilder::create()
+    ->addMetadataDir($projectRoot.'/serializer')
+    ->build();
+
+$app = function (
+    \React\Http\Request $request,
+    \React\Http\Response $response
+) use (
+    $matcher,
+    $repositoryRoot,
+    $projectRoot,
+    $serializer
+) {
     try {
         $parameters = $matcher->match($request->getPath());
     } catch (\Symfony\Component\Routing\Exception\ResourceNotFoundException $e) {
@@ -24,7 +36,34 @@ $app = function (\React\Http\Request $request, \React\Http\Response $response) u
         // TODO: checks!
         $c->setRepositoryRoot($repositoryRoot);
         $c->setProjectRoot($projectRoot);
-        $c->$action($request, $response);
+        $reflection = new ReflectionClass($c);
+        $actionMethod = $reflection->getMethod($action);
+        $args = $actionMethod->getParameters();
+        $params = [];
+        foreach ($args as $arg) {
+            if ($arg->getClass() && 'React\Http\Request' === $arg->getClass()->getName()) {
+                $params[] = $request;
+                continue;
+            }
+            if (array_key_exists($arg->getName(), $parameters)) {
+                $params[] = $parameters[$arg->getName()];
+            } else {
+                $params[] = null;
+            }
+        }
+        try {
+            $data = call_user_func_array([$c, $action], $params);
+        } catch (\Exception $e) {
+            $data = ['error' => $e->getMessage()];
+        }
+        $response->writeHead(200, array('Content-Type' => 'application/json'));
+        $response->end(
+            $serializer->serialize(
+                $data,
+                'json',
+                \JMS\Serializer\SerializationContext::create()->setGroups('list')
+            )
+        );
         return;
     } else {
         $response->writeHead(404, array('Content-Type' => 'application/json'));

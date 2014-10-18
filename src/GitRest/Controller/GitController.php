@@ -3,15 +3,26 @@
 namespace GitRest\Controller;
 
 use React\Http\Request;
-use React\Http\Response;
 
 class GitController
 {
     use Controller;
 
-    public function status(Request $request, Response $response)
+    public function status()
     {
-        $response->writeHead(200, array('Content-Type' => 'application/json'));
-        $response->end($this->getSerializer()->serialize($this->getRepository()->getStatus(), 'json'));
+        return $this->getRepository()->getStatus();
+    }
+
+    public function tree($ref, $path)
+    {
+        return $this->getRepository()->getTree($ref, $path);
+    }
+
+    public function blob($ref, $path)
+    {
+        return $this->getRepository()->outputContent(
+            $this->getRepository()->getTree($ref, $path)->getObject(),
+            $ref
+        );
     }
 } 

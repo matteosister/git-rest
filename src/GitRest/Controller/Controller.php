@@ -48,14 +48,4 @@ trait Controller
     {
         return new Repository($this->repositoryRoot);
     }
-
-    /**
-     * @return \JMS\Serializer\Serializer
-     */
-    protected function getSerializer()
-    {
-        return SerializerBuilder::create()
-            ->addMetadataDir($this->getProjectRoot().'/serializer')
-            ->build();
-    }
 } 
