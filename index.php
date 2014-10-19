@@ -2,8 +2,19 @@
 
 require 'vendor/autoload.php';
 
-/** @var \Symfony\Component\Routing\Matcher\UrlMatcher $matcher */
-$matcher = include 'routing.php';
+use React\Http\Request;
+use React\Http\Response;
+use React\EventLoop\Factory;
+use React\Socket\Server as SocketServer;
+use React\Http\Server as HttpServer;
+use JMS\Serializer\SerializationContext;
+use Symfony\Component\Routing\Exception\ResourceNotFoundException;
+use Symfony\Component\Routing\Matcher\UrlMatcher;
+use Symfony\Component\Routing\RequestContext;
+
+$routes = include 'routing.php';
+
+$matcher = new UrlMatcher($routes, new RequestContext(''));
 
 $repositoryRoot = __DIR__;
 $projectRoot = __DIR__;
@@ -13,17 +24,18 @@ $serializer = \JMS\Serializer\SerializerBuilder::create()
     ->build();
 
 $app = function (
-    \React\Http\Request $request,
-    \React\Http\Response $response
+    Request $request,
+    Response $response
 ) use (
     $matcher,
     $repositoryRoot,
     $projectRoot,
-    $serializer
+    $serializer,
+    $routes
 ) {
     try {
         $parameters = $matcher->match($request->getPath());
-    } catch (\Symfony\Component\Routing\Exception\ResourceNotFoundException $e) {
+    } catch (ResourceNotFoundException $e) {
         $response->writeHead(404, array('Content-Type' => 'application/json'));
         $response->end(json_encode(['error' => 'Not Found']));
         return;
@@ -32,6 +44,7 @@ $app = function (
     $action = $parameters['_controller'][1];
     $callable = [$controller, $action];
     if (is_callable($callable)) {
+        /** @var \GitRest\Controller\Controller $c */
         $c = new $controller();
         // TODO: checks!
         $c->setRepositoryRoot($repositoryRoot);
@@ -41,8 +54,13 @@ $app = function (
         $args = $actionMethod->getParameters();
         $params = [];
         foreach ($args as $arg) {
-            if ($arg->getClass() && 'React\Http\Request' === $arg->getClass()->getName()) {
-                $params[] = $request;
+            if ($arg->getClass()) {
+                if ('React\Http\Request' === $arg->getClass()->getName()) {
+                    $params[] = $request;
+                }
+                if ('Symfony\Component\Routing\RouteCollection' === $arg->getClass()->getName()) {
+                    $params[] = $routes;
+                }
                 continue;
             }
             if (array_key_exists($arg->getName(), $parameters)) {
@@ -61,7 +79,7 @@ $app = function (
             $serializer->serialize(
                 $data,
                 'json',
-                \JMS\Serializer\SerializationContext::create()->setGroups('list')
+                SerializationContext::create()->setGroups('list')
             )
         );
         return;
@@ -71,9 +89,9 @@ $app = function (
     }
 };
 
-$loop = React\EventLoop\Factory::create();
-$socket = new React\Socket\Server($loop);
-$http = new React\Http\Server($socket, $loop);
+$loop = Factory::create();
+$socket = new SocketServer($loop);
+$http = new HttpServer($socket, $loop);
 
 $http->on('request', $app);
 echo "Server running at http://127.0.0.1:1337\n";

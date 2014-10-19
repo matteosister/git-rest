@@ -1,0 +1,31 @@
+Symfony\Component\Routing\Route:
+    xml_root_name: route
+    exclusion_policy: ALL
+    properties:
+        path:
+            expose: true
+            groups: [list]
+        host:
+            expose: true
+            groups: [list]
+        schemes:
+            expose: true
+            groups: [list]
+        methods:
+            expose: true
+            groups: [list]
+        defaults:
+            expose: true
+            groups: [list]
+        requirements:
+            expose: true
+            groups: [list]
+        options:
+            expose: true
+            groups: [list]
+        compiled:
+            expose: true
+            groups: [list]
+        condition:
+            expose: true
+            groups: [list]
