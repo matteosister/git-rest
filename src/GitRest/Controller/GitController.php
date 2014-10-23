@@ -2,7 +2,7 @@
 
 namespace GitRest\Controller;
 
-use React\Http\Request;
+use GitRest\Exception\BadRequestException;
 
 class GitController
 {
@@ -11,6 +11,15 @@ class GitController
     public function status()
     {
         return $this->getRepository()->getStatus();
+    }
+
+    public function statusType($type)
+    {
+        $status = $this->getRepository()->getStatus();
+        if (is_callable([$status, $type])) {
+            return call_user_func([$status, $type]);
+        }
+        throw new BadRequestException;
     }
 
     public function tree($ref, $path)
@@ -25,4 +34,4 @@ class GitController
             $ref
         );
     }
-} 
+}

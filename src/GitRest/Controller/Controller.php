@@ -48,4 +48,4 @@ trait Controller
     {
         return new Repository($this->repositoryRoot);
     }
-} 
+}

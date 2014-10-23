@@ -17,12 +17,15 @@
             "GitRest\\": "src/"
         }
     },
+    "minimum-stability": "stable",
+    "config": {
+        "bin-dir": "bin"
+    },
     "license": "LGPL-3.0+",
     "authors": [
         {
             "name": "Matteo Giachino",
             "email": "matteog@gmail.com"
         }
-    ],
-    "minimum-stability": "stable"
+    ]
 }

@@ -19,4 +19,4 @@ class MainController
         }
         return $routes;
     }
-} 
+}
