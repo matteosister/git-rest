@@ -3,7 +3,7 @@
     "description": "A drop in rest interface for git",
     "require": {
         "react/http": "0.3.*",
-        "cypresslab/gitelephant": "~1.0",
+        "cypresslab/gitelephant": "dev-develop",
         "symfony/routing": "~2.5",
         "jms/serializer": "~0.16"
     },

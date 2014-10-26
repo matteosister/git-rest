@@ -2,16 +2,24 @@ GitElephant\Objects\Tree:
     xml_root_name: tree
     exclusion_policy: ALL
     properties:
-        ref:
-            expose: true
-            groups: [list]
-        subject:
-            expose: true
-            groups: [list]
+#        ref:
+#            expose: true
+#            groups: [list]
+#        subject:
+#            expose: true
+#            groups: [list]
         children:
             max_depth: 1
             expose: true
             groups: [list]
-        pathChildren:
+#        pathChildren:
+#            expose: true
+#            groups: [list]
+
+    virtual_properties:
+        isRoot:
+            expose: true
+            groups: [list]
+        getParent:
             expose: true
             groups: [list]

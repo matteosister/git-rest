@@ -17,10 +17,3 @@ GitElephant\Objects\Object:
         path:
             expose: true
             groups: [list]
-        full_path:
-            expose: true
-            groups: [list]
-    virtual_properties:
-        getLastCommit:
-            groups: [list]
-        getFullPath: {}

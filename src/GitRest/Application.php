@@ -106,12 +106,17 @@ class Application
                 } catch (\Exception $e) {
                     $data = ['error' => $e->getMessage()];
                 }
-                $response->writeHead(200, array('Content-Type' => 'application/json'));
+                $response->writeHead(200, [
+                    'Content-Type' => 'application/json',
+                    'Access-Control-Allow-Origin' => '*'
+                ]);
                 $response->end(
                     $this->getSerializer()->serialize(
                         $data,
                         'json',
-                        SerializationContext::create()->setGroups('list')
+                        SerializationContext::create()
+                            ->setGroups('list')
+                            ->setSerializeNull(true)
                     )
                 );
                 return;

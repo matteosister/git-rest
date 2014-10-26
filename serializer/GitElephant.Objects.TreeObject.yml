@@ -1,0 +1,27 @@
+GitElephant\Objects\TreeObject:
+    xml_root_name: tree_object
+    exclusion_policy: ALL
+    properties:
+        ref:
+            expose: true
+            groups: [list]
+        subject:
+            expose: true
+            groups: [list]
+        children:
+            max_depth: 1
+            inline: true
+            expose: true
+            groups: [list]
+        pathChildren:
+            expose: true
+            groups: [list]
+
+    virtual_properties:
+        getFullPath:
+            expose: true
+            groups: [list]
+
+        getLastCommit:
+            expose: true
+            groups: [list]

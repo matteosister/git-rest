@@ -10,24 +10,22 @@ $routes->add('status_type', new Route('/status/{type}', ['_controller' => ['GitC
 $routes->add(
     'tree',
     new Route(
-        '/tree/{ref}/{path}',
+        '/tree',
         [
             '_controller' => ['GitController', 'tree'],
             'path' => null
-        ],
-        [ 'path' => '.*' ]
+        ]
     )
 );
 
 $routes->add(
     'blob',
     new Route(
-        '/blob/{ref}/{path}',
+        '/blob',
         [
             '_controller' => ['GitController', 'blob'],
             'path' => null
-        ],
-        [ 'path' => '.*' ]
+        ]
     )
 );
 
