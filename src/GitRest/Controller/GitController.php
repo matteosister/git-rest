@@ -34,10 +34,15 @@ class GitController
     {
         $query = $request->getQuery();
         $query = array_replace(['ref' => 'master', 'path' => null], $query);
-        return $this->getRepository()->outputContent(
+        $lines = $this->getRepository()->outputContent(
             $this->getRepository()->getTree($query['ref'], $query['path'])->getObject(),
             $query['ref']
         );
+        $output = [];
+        for ($i = 1; $i <= count($lines); $i++) {
+            $output[] = ['n' => $i, 'c' => $lines[$i - 1]];
+        }
+        return $output;
     }
 
     public function branches()
