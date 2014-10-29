@@ -28,5 +28,6 @@ $routes->add(
         ]
     )
 );
+$routes->add('branches', new Route('/branches', ['_controller' => ['GitController', 'branches']]));
 
 return $routes;

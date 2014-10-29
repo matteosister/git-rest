@@ -5,9 +5,9 @@ GitElephant\Objects\Tree:
 #        ref:
 #            expose: true
 #            groups: [list]
-#        subject:
-#            expose: true
-#            groups: [list]
+        subject:
+            expose: true
+            groups: [list]
         children:
             max_depth: 1
             expose: true

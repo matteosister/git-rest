@@ -39,4 +39,9 @@ class GitController
             $query['ref']
         );
     }
+
+    public function branches()
+    {
+        return $this->getRepository()->getBranches();
+    }
 }
