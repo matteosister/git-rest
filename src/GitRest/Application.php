@@ -90,6 +90,9 @@ class Application
                         if ('React\Http\Request' === $arg->getClass()->getName()) {
                             $params[] = $request;
                         }
+                        if ('React\Http\Response' === $arg->getClass()->getName()) {
+                            $params[] = $response;
+                        }
                         if ('Symfony\Component\Routing\RouteCollection' === $arg->getClass()->getName()) {
                             $params[] = $this->routes;
                         }
@@ -106,19 +109,21 @@ class Application
                 } catch (\Exception $e) {
                     $data = ['error' => $e->getMessage()];
                 }
-                $response->writeHead(200, [
-                    'Content-Type' => 'application/json',
-                    'Access-Control-Allow-Origin' => '*'
-                ]);
-                $response->end(
-                    $this->getSerializer()->serialize(
-                        $data,
-                        'json',
-                        SerializationContext::create()
-                            ->setGroups('list')
-                            ->setSerializeNull(true)
-                    )
-                );
+                if ($data) {
+                    $response->writeHead(200, [
+                        'Content-Type' => 'application/json',
+                        'Access-Control-Allow-Origin' => '*'
+                    ]);
+                    $response->end(
+                        $this->getSerializer()->serialize(
+                            $data,
+                            'json',
+                            SerializationContext::create()
+                                ->setGroups('list')
+                                ->setSerializeNull(true)
+                        )
+                    );
+                }
                 return;
             } else {
                 $response->writeHead(404, array('Content-Type' => 'application/json'));

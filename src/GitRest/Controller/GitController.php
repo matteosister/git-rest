@@ -4,6 +4,7 @@ namespace GitRest\Controller;
 
 use GitRest\Exception\BadRequestException;
 use React\Http\Request;
+use React\Http\Response;
 
 class GitController
 {
@@ -30,7 +31,7 @@ class GitController
         return $this->getRepository()->getTree($query['ref'], $query['path']);
     }
 
-    public function blob(Request $request)
+    public function blob(Request $request, Response $response)
     {
         $query = $request->getQuery();
         $query = array_replace(['ref' => 'master', 'path' => null], $query);
@@ -38,11 +39,12 @@ class GitController
             $this->getRepository()->getTree($query['ref'], $query['path'])->getObject(),
             $query['ref']
         );
-        $output = [];
-        for ($i = 1; $i <= count($lines); $i++) {
-            $output[] = ['n' => $i, 'c' => $lines[$i - 1]];
-        }
-        return $output;
+        $response->writeHead(200, [
+            'Content-Type' => 'text/plain',
+            'Access-Control-Allow-Origin' => '*'
+        ]);
+        $response->end(implode("\n", $lines));
+        return;
     }
 
     public function branches()
