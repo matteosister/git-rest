@@ -1,5 +1,13 @@
 <?php
 
+$params = $argv;
+array_shift($params);
+if (!isset($params[0])) {
+    $repoRoot = __DIR__;
+} else {
+    $repoRoot = $params[0];
+}
+
 require 'vendor/autoload.php';
 
 use React\Http\Request;
@@ -16,7 +24,7 @@ $routes = include 'routing.php';
 
 $app = new \GitRest\Application($routes);
 $app->setProjectRoot(__DIR__);
-$app->setRepositoryRoot(__DIR__);
+$app->setRepositoryRoot($repoRoot);
 
 $loop = Factory::create();
 $socket = new SocketServer($loop);
