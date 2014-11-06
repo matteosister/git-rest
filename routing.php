@@ -17,7 +17,6 @@ $routes->add(
         ]
     )
 );
-
 $routes->add(
     'blob',
     new Route(
@@ -29,5 +28,6 @@ $routes->add(
     )
 );
 $routes->add('branches', new Route('/branches', ['_controller' => ['GitController', 'branches']]));
+$routes->add('commit', new Route('/commit/{sha}', ['_controller' => ['GitController', 'commit']]));
 
 return $routes;

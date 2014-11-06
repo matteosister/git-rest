@@ -5,6 +5,7 @@ namespace GitRest\Controller;
 use GitRest\Exception\BadRequestException;
 use React\Http\Request;
 use React\Http\Response;
+use GitRest\Response\Data;
 
 class GitController
 {
@@ -50,5 +51,15 @@ class GitController
     public function branches()
     {
         return $this->getRepository()->getBranches();
+    }
+
+    /**
+     * @SerializationGroup("detail")
+     */
+    public function commit($sha)
+    {
+        $commit = $this->getRepository()->getCommit($sha);
+        return Data::create($this->getRepository()->getDiff($commit))
+            ->setSerializationGroup('detail');
     }
 }

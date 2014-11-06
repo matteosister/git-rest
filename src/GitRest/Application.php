@@ -2,6 +2,7 @@
 
 namespace GitRest;
 
+use GitRest\Response\Data;
 use JMS\Serializer\SerializationContext;
 use JMS\Serializer\SerializerBuilder;
 use React\Http\Request;
@@ -105,9 +106,14 @@ class Application
                     }
                 }
                 try {
-                    $data = call_user_func_array([$c, $action], $params);
+                    $refl = new \ReflectionClass($c);
+                    $method = $refl->getMethod($action);
+                    $data = $method->invokeArgs($c, $params);
+                    if (false === $data instanceof Data) {
+                        $data = Data::create($data);
+                    }
                 } catch (\Exception $e) {
-                    $data = ['error' => $e->getMessage()];
+                    $data = Data::create(['error' => $e->getMessage()]);
                 }
                 if ($data) {
                     $response->writeHead(200, [
@@ -116,10 +122,10 @@ class Application
                     ]);
                     $response->end(
                         $this->getSerializer()->serialize(
-                            $data,
+                            $data->getContent(),
                             'json',
                             SerializationContext::create()
-                                ->setGroups('list')
+                                ->setGroups($data->getSerializationGroup())
                                 ->setSerializeNull(true)
                         )
                     );
