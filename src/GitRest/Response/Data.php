@@ -8,6 +8,8 @@ class Data
 
     private $serializationGroup;
 
+    private $defaultHeaders;
+
     /**
      * @param $content
      */
@@ -15,8 +17,51 @@ class Data
     {
         $this->content = $content;
         $this->serializationGroup = 'list';
+        $this->defaultHeaders = [
+            'Content-Type' => 'application/json',
+            'Access-Control-Allow-Origin' => '*'
+        ];
     }
 
+    /**
+     * @param $name
+     * @param $value
+     *
+     * @return $this
+     */
+    public function setHeader($name, $value)
+    {
+        $this->defaultHeaders = array_replace($this->defaultHeaders, [$name => $value]);
+
+        return $this;
+    }
+
+    /**
+     * @param $name
+     * @return mixed
+     */
+    public function getHeader($name)
+    {
+        return $this->defaultHeaders[$name];
+    }
+
+    public function isJson()
+    {
+        return $this->getHeader('Content-Type') === 'application/json';
+    }
+
+    /**
+     * @return array
+     */
+    public function getHeaders()
+    {
+        return $this->defaultHeaders;
+    }
+
+    /**
+     * @param $content
+     * @return Data
+     */
     public static function create($content)
     {
         return new self($content);

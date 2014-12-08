@@ -5,7 +5,8 @@
         "react/http": "0.3.*",
         "cypresslab/gitelephant": "dev-develop",
         "symfony/routing": "~2.5",
-        "jms/serializer": "~0.16"
+        "jms/serializer": "~0.16",
+        "cypresslab/pygments-elephant-bundle": "dev-master"
     },
     "require-dev": {
         "phpspec/phpspec": "~2.0",

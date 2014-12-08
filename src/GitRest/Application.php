@@ -109,28 +109,32 @@ class Application
                     $refl = new \ReflectionClass($c);
                     $method = $refl->getMethod($action);
                     $data = $method->invokeArgs($c, $params);
-                    if (false === $data instanceof Data) {
-                        $data = Data::create($data);
+                    if (is_null($data)) {
+                        $data = Data::create('');
+                    } else {
+                        if (false === $data instanceof Data) {
+                            $data = Data::create($data);
+                        }
                     }
                 } catch (\Exception $e) {
                     $data = Data::create(['error' => $e->getMessage()]);
                 }
                 if ($data) {
-                    $response->writeHead(200, [
-                        'Content-Type' => 'application/json',
-                        'Access-Control-Allow-Origin' => '*'
-                    ]);
-                    $response->end(
-                        $this->getSerializer()->serialize(
-                            $data->getContent(),
-                            'json',
-                            SerializationContext::create()
-                                ->setGroups($data->getSerializationGroup())
-                                ->setSerializeNull(true)
-                        )
-                    );
+                    $response->writeHead(200, $data->getHeaders());
+                    if ($data->isJson()) {
+                        $response->end(
+                            $this->getSerializer()->serialize(
+                                $data->getContent(),
+                                'json',
+                                SerializationContext::create()
+                                    ->setGroups($data->getSerializationGroup())
+                                    ->setSerializeNull(true)
+                            )
+                        );
+                    } else {
+                        $response->end($data->getContent());
+                    }
                 }
-                return;
             } else {
                 $response->writeHead(404, array('Content-Type' => 'application/json'));
                 $response->end(json_encode(['error' => 'controller not found']));

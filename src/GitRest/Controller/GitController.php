@@ -2,6 +2,8 @@
 
 namespace GitRest\Controller;
 
+use Cypress\PygmentsElephantBundle\PygmentsElephant\Pygmentize;
+use Cypress\PygmentsElephantBundle\PygmentsElephant\PygmentizeBinary;
 use GitRest\Exception\BadRequestException;
 use React\Http\Request;
 use React\Http\Response;
@@ -36,16 +38,27 @@ class GitController
     {
         $query = $request->getQuery();
         $query = array_replace(['ref' => 'master', 'path' => null], $query);
-        $lines = $this->getRepository()->outputContent(
-            $this->getRepository()->getTree($query['ref'], $query['path'])->getObject(),
-            $query['ref']
-        );
-        $response->writeHead(200, [
-            'Content-Type' => 'text/plain',
-            'Access-Control-Allow-Origin' => '*'
-        ]);
-        $response->end(implode("\n", $lines));
-        return;
+        if (array_key_exists('pygmentize', $query)) {
+            return Data::create($this->pygmentize($query['ref'], $query['path']))
+                ->setHeader('Content-Type', 'text/html');
+        } else {
+            $object = $this->getRepository()->getTree($query['ref'], $query['path'])->getObject();
+            if (is_null($object)) {
+                throw new BadRequestException;
+            }
+            $lines = $this->getRepository()->outputContent($object, $query['ref']);
+            return $lines;
+        }
+    }
+
+    private function pygmentize($ref, $path)
+    {
+        $object = $this->getRepository()->getTree($ref, $path)->getObject();
+        $path = $object->getRepository()->getPath().'/'.$object->getFullPath();
+        $pygmentizeBinary = new PygmentizeBinary();
+        $pygmentize = new Pygmentize($pygmentizeBinary);
+        $pygmentize->setFormat('style=colorful,linenos=1');
+        return $pygmentize->formatFile($path);
     }
 
     public function branches()
