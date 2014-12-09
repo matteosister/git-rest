@@ -57,8 +57,14 @@ class GitController
         $path = $object->getRepository()->getPath().'/'.$object->getFullPath();
         $pygmentizeBinary = new PygmentizeBinary();
         $pygmentize = new Pygmentize($pygmentizeBinary);
-        $pygmentize->setFormat('style=colorful,linenos=1');
-        return $pygmentize->formatFile($path);
+        return $pygmentize->formatFile(
+            $path,
+            null,
+            array(
+                'style' => 'colorful',
+                'linenos' => 'table',
+            )
+        );
     }
 
     public function branches()
